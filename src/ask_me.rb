@@ -3,6 +3,7 @@ require 'io/console'
 # TODO build in that pictures can be used in the answer
 # TODO handle whitespaces in picture path
 # TODO mix questions when asked
+# TODO add a way to print out the question and answers so you can learn it in the train on the way to the exam
 
 if ARGV.size != 1
   puts "usage: ruby ask_me.rb questions.conf"
