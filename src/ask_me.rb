@@ -1,3 +1,5 @@
+require 'io/console'
+
 if ARGV.size != 1
   puts "usage: ruby ask_me.rb questions.conf"
   exit
@@ -7,6 +9,7 @@ questions_file = ARGV[0]
 question_answer = {}
 answer_block_start = "{{"
 answer_block_end = "}}"
+key_end = "q"
 
 # check if questions_file is a file
 if !FileTest.file?(questions_file)
@@ -57,7 +60,11 @@ question_answer.each do |key,value|
   puts "--- question ---"
   puts "#{key}"
   puts "----------------"
-  STDIN.getc
+  key_pressed = STDIN.getch
+  if (key_pressed == key_end)
+    puts "closeing the application"
+    exit
+  end
   puts "--- answer ---"
   if value.kind_of?(Array)
     value.each do |line|
