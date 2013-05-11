@@ -1,5 +1,9 @@
 require 'io/console'
 
+# TODO build in that pictures can be used in the answer
+# TODO handle whitespaces in picture path
+# TODO mix questions when asked 
+
 if ARGV.size != 1
   puts "usage: ruby ask_me.rb questions.conf"
   exit
@@ -10,6 +14,7 @@ question_answer = {}
 answer_block_start = "{{"
 answer_block_end = "}}"
 key_end = "q"
+image_viewer = "/usr/bin/eog"
 
 # check if questions_file is a file
 if !FileTest.file?(questions_file)
@@ -17,10 +22,17 @@ if !FileTest.file?(questions_file)
   exit
 end
 
+# check if image viewer is available
+if !FileTest.file?(image_viewer)
+  puts "!!! image viewer are no file: #{image_viewer}"
+  exit
+end
+
 question = ""
 block_found_start = false
 block_found_end = false
 answer = []
+image_stored = false
 
 File.open(questions_file, "r").each do |line|
   if line.match(/^q:(.*)/)
@@ -34,11 +46,22 @@ File.open(questions_file, "r").each do |line|
     end
     if (question.size > 0)
       if (!block_found_start)
-        question_answer.store(question, temp_answer);
+        if image_stored
+          answer << temp_answer
+          question_answer.store(question, answer);
+        else
+          question_answer.store(question, temp_answer);
+        end
         question = ""
+        answer = []
       end
     end
   else
+    if line.match(/^i:(.*)/)
+      image_stored = true
+      puts "image stored"
+      answer << line
+    end
     if line.match(/(.*)#{answer_block_end}/)
       block_found_end = true
       answer << $1
@@ -59,6 +82,16 @@ end
 question_answer.each do |key,value|
   puts "--- question ---"
   puts "#{key}"
+  if value.kind_of?(Array)
+    if (value.size > 0)
+      if (value[0].match(/^i:(.*)/))
+        puts "image found: #{$1}"
+#        Thread.new do
+          `#{image_viewer} #{$1} &`
+#        end
+      end
+    end
+  end
   puts "----------------"
   key_pressed = STDIN.getch
   if (key_pressed == key_end)
@@ -68,7 +101,9 @@ question_answer.each do |key,value|
   puts "--- answer ---"
   if value.kind_of?(Array)
     value.each do |line|
-      puts line
+      if ! line.match(/^i:.*/)
+        puts line
+      end
     end
   else
     puts "#{value}"
