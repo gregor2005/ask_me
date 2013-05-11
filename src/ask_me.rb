@@ -53,12 +53,11 @@ File.open(questions_file, "r").each do |line|
   end
 end
 
-key_pressed = gets
-
 question_answer.each do |key,value|
   puts "--- question ---"
   puts "#{key}"
   puts "----------------"
+  STDIN.getc
   puts "--- answer ---"
   if value.kind_of?(Array)
     value.each do |line|
@@ -68,4 +67,7 @@ question_answer.each do |key,value|
     puts "#{value}"
   end
   puts "--------------"
+  puts
+  puts
+  puts
 end
