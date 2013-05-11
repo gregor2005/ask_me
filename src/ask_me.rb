@@ -28,7 +28,7 @@ File.open(questions_file, "r").each do |line|
   end
 end
 
-key = gets
+key_pressed = gets
 
 question_answer.each do |key,value|
   puts "--- question ---"
