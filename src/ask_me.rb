@@ -87,7 +87,7 @@ question_answer.each do |key,value|
       if (value[0].match(/^i:(.*)/))
         puts "image found: #{$1}"
 #        Thread.new do
-          `#{image_viewer} #{$1} &`
+          system("#{image_viewer} #{$1} &")
 #        end
       end
     end
