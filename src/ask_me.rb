@@ -2,7 +2,7 @@ require 'io/console'
 
 # TODO build in that pictures can be used in the answer
 # TODO handle whitespaces in picture path
-# TODO mix questions when asked 
+# TODO mix questions when asked
 
 if ARGV.size != 1
   puts "usage: ruby ask_me.rb questions.conf"
@@ -86,9 +86,7 @@ question_answer.each do |key,value|
     if (value.size > 0)
       if (value[0].match(/^i:(.*)/))
         puts "image found: #{$1}"
-#        Thread.new do
-          system("#{image_viewer} #{$1} &")
-#        end
+        system("#{image_viewer} #{$1} &")
       end
     end
   end
