@@ -24,6 +24,18 @@ q: question
 i: path to image
 a: answer like above described
 ```
+it is also possible to add images in the answer
+```
+q: question
+a: i: path to image
+```
+or
+```
+q: question
+a: {{answertext
+line 2
+i: path to image}}
+```
 
 how to run it
 =============
