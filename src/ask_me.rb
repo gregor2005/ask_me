@@ -1,6 +1,5 @@
 require 'io/console'
 
-# TODO build in that pictures can be used in the answer
 # TODO handle whitespaces in picture path
 # TODO add a way to print out the question and answers so you can learn it in the train on the way to the exam
 
@@ -14,7 +13,7 @@ question_answer = {}
 answer_block_start = "{{"
 answer_block_end = "}}"
 key_end = "q"
-image_viewer = "/usr/bin/eog"
+@image_viewer = "/usr/bin/eog"
 
 # check if questions_file is a file
 if !FileTest.file?(questions_file)
@@ -23,9 +22,13 @@ if !FileTest.file?(questions_file)
 end
 
 # check if image viewer is available
-if !FileTest.file?(image_viewer)
-  puts "!!! image viewer are no file: #{image_viewer}"
+if !FileTest.file?(@image_viewer)
+  puts "!!! image viewer are no file: #{@image_viewer}"
   exit
+end
+
+def open_image image
+  system("#{@image_viewer} #{image} &")
 end
 
 question = ""
@@ -57,9 +60,8 @@ File.open(questions_file, "r").each do |line|
       end
     end
   else
-    if line.match(/^i:(.*)/)
+    if line.match(/^i:(.*)/) && !block_found_start
       image_stored = true
-      puts "image stored"
       answer << line
     end
     if line.match(/(.*)#{answer_block_end}/)
@@ -79,7 +81,7 @@ File.open(questions_file, "r").each do |line|
   end
 end
 
-# shuffle questions 
+# shuffle questions
 question_answer = Hash[question_answer.to_a.sample(question_answer.length)]
 
 question_answer.each do |key,value|
@@ -88,8 +90,7 @@ question_answer.each do |key,value|
   if value.kind_of?(Array)
     if (value.size > 0)
       if (value[0].match(/^i:(.*)/))
-        puts "image found: #{$1}"
-        system("#{image_viewer} #{$1} &")
+        open_image $1
       end
     end
   end
@@ -102,12 +103,21 @@ question_answer.each do |key,value|
   puts "--- answer ---"
   if value.kind_of?(Array)
     value.each do |line|
-      if ! line.match(/^i:.*/)
+      if line.match(/^\s*i:(.*)/)
+        puts "image will be pop up: #{$1}"
+        open_image $1
+      else
         puts line
       end
     end
   else
-    puts "#{value}"
+    puts "found only one line"
+    if value.match(/^\s*i:(.*)/)
+      puts "image will be pop up: #{$1}"
+      open_image $1
+    else
+      puts "#{value}"
+    end
   end
   puts "--------------"
   puts
