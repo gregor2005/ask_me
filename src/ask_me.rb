@@ -2,7 +2,6 @@ require 'io/console'
 
 # TODO build in that pictures can be used in the answer
 # TODO handle whitespaces in picture path
-# TODO mix questions when asked
 # TODO add a way to print out the question and answers so you can learn it in the train on the way to the exam
 
 if ARGV.size != 1
@@ -79,6 +78,9 @@ File.open(questions_file, "r").each do |line|
     end
   end
 end
+
+# shuffle questions 
+question_answer = Hash[question_answer.to_a.sample(question_answer.length)]
 
 question_answer.each do |key,value|
   puts "--- question ---"
